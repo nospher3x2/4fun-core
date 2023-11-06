@@ -1,16 +1,36 @@
 #include "./DrawManager.hpp"
+
+#include <shlobj_core.h>
+
 #include "./ImGui/imgui_impl_win32.h"
 #include "./ImGui/imgui_impl_dx11.h"
 #include "./Kiero/kiero.h"
 #include "./Console/Console.hpp"
 
 #include "../EventHandler/EventHandler.hpp"
+#include "../Game/Game.hpp"
+#include "../Game/ManagerTemplate/ManagerTemplate.hpp"
+#include "../Menu/Fonts/Fonts.hpp"
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void DrawManager::Draw() {
+	if (ImGui::Begin("Object Viewer"))
+	{
+		for (GameObject* hero : ManagerTemplate::GetHeroes())
+		{
+			if (ImGui::TreeNode(hero->GetName().c_str()))
+			{
+				hero->ShowDebugImGuiMenu();
+				ImGui::TreePop();
+			}
+		}
+	}
+	ImGui::End();
+
+	ImGui::Text("Start");
+
 	ImGui::Begin("[200] CORE");
 	{
-		ImGui::Text("Start");
 	}
 	ImGui::End();
 }
@@ -36,6 +56,13 @@ HRESULT __stdcall DrawManager::HookPresent(IDXGISwapChain* pSwapChain, UINT Sync
 
 	if (!DrawManager::ImGuiInitialized)
 		DrawManager::InitRenderer(pSwapChain);
+
+	static UINT64 lastTick = 0;
+	if (GetTickCount64() - lastTick >= 30)
+	{
+		EventHandler::Trigger(EventType::OnTick);
+		lastTick = GetTickCount64();
+	}
 
 	DrawManager::StartRenderer();
 
@@ -114,28 +141,20 @@ void DrawManager::SetImGui()
 	ImGui_ImplWin32_Init(Renderer->Window);
 	ImGui_ImplDX11_Init(Renderer->Device, Renderer->Context);
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
-	static const ImWchar ranges[] =
-	{
-		0x0020, 0x00FF, // Basic Latin + Latin Supplement
-		0x2000, 0x3000,
-		0,
-	};
+	char path[1024];
+	if (!SHGetSpecialFolderPathA(nullptr, path, CSIDL_APPDATA, TRUE))
+		throw std::exception("Fatal error. Couldn't get appdata folder.");
 
-	io.Fonts->AddFontFromFileTTF(
-		R"(C:\Windows\Fonts\Consola.ttf)", 
-		13.0f, 
-		nullptr, 
-		ranges
-	);
-	ImGui::GetIO().Fonts->Build();
+	auto pathFileLogger = std::string(path) + "\\" + "TwoHundred";
+	pathFileLogger.append("\\imgui.ini");
 
-	//ImGui::GetIO().ConfigFlags = ImGuiConfigFlags_NoMouse;
-	ImGui::GetStyle().AntiAliasedFill = true;
-	ImGui::GetStyle().AntiAliasedLines = true;
+	auto io = &ImGui::GetIO();
+	auto font = io->Fonts->AddFontFromMemoryCompressedTTF(Fonts::DroidSans_compressed_data, Fonts::DroidSans_compressed_size, 16);
+	io->ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange; // | ImGuiConfigFlags_DockingEnable;
+	io->IniFilename = pathFileLogger.c_str();
 
 	const auto style = &ImGui::GetStyle();
+
 	style->WindowPadding = ImVec2(15, 15);
 	style->WindowRounding = 8.0f;
 	style->FramePadding = ImVec2(5, 5);
@@ -150,7 +169,8 @@ void DrawManager::SetImGui()
 	style->WindowBorderSize = 0.0f;
 	style->Alpha = 0.85f;
 
-	constexpr auto accentColor = ImVec4(0.58f, 0.22f, 0.96f, 1.00f);
+	auto accentColor = ImVec4(0.58f, 0.22f, 0.96f, 1.00f);
+
 	style->Colors[ImGuiCol_Tab] = ImVec4(accentColor.x, accentColor.y, accentColor.z, accentColor.w - 0.45f);
 	style->Colors[ImGuiCol_TabActive] = ImVec4(accentColor.x, accentColor.y, accentColor.z, accentColor.w - 0.15f);
 	style->Colors[ImGuiCol_TabUnfocused] = ImVec4(accentColor.x, accentColor.y, accentColor.z, accentColor.w - 0.45f);
@@ -187,9 +207,9 @@ void DrawManager::SetImGui()
 	style->Colors[ImGuiCol_Header] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
 	style->Colors[ImGuiCol_HeaderHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
 	style->Colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-	//style->Colors[ImGuiCol_Column] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-	//style->Colors[ImGuiCol_ColumnHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-	//style->Colors[ImGuiCol_ColumnActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+	style->Colors[ImGuiCol_Separator] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+	style->Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+	style->Colors[ImGuiCol_SeparatorActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
 	style->Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 	style->Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
 	style->Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
@@ -198,7 +218,7 @@ void DrawManager::SetImGui()
 	style->Colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
 	style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
 	style->Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
-	//style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
+	style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 	style->Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
 }
 

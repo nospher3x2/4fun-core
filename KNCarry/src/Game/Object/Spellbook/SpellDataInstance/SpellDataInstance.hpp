@@ -10,8 +10,9 @@ class SpellDataInstance
 {
 public:
 	CLASS_GETTER(uint8_t, GetLevel, 0x28)
-	CLASS_GETTER(float, GetExpireTime, 0x30)
+	CLASS_GETTER(float, GetReadyAt, 0x30)
 	CLASS_GETTER(uint8_t, GetAmmo, 0x5C)
+	CLASS_GETTER(float, GetTotalCooldown, 0x74)
 	CLASS_GETTER(TargetClient*, GetTargetClient, 0x128)
 	CLASS_GETTER(SpellData*, GetSpellData, 0x130)
 

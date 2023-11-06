@@ -1,7 +1,11 @@
 #pragma once
 #include <Windows.h>
 
-namespace mem
+class MemoryScanner
 {
-	char* ScanModInternal(char* pattern, char* mask, char* moduleBase);
-}
+public:
+	static void* ScanModInternal(const char* pattern, const char* mask, char* baseAddress);
+private:
+	static char* ScanInternal(const char* pattern, const char* mask, char* begin, size_t size);
+	static char* ScanBasic(const char* pattern, const char* mask, char* begin, size_t size);
+};

@@ -3,7 +3,7 @@
 GameObject* NeutralCampManager::GetCampObject(const CampId campId)
 {
 	static const auto fnFindCamp{
-		reinterpret_cast<GameObject*(__fastcall*)(uintptr_t*, CampId)>(DEFINE_RVA(0x1F7D70))
+		reinterpret_cast<GameObject*(__fastcall*)(uintptr_t*, CampId)>(DEFINE_RVA(0x1f8ad0))
 	};
 
 	return fnFindCamp(NeutralCampManager::GetInstance(), campId);
@@ -21,7 +21,7 @@ float NeutralCampManager::GetTimerExpiry(GameObject* camp)
 uintptr_t* NeutralCampManager::GetInstance()
 {
 	static uintptr_t* campManagerInstance{
-		*reinterpret_cast<uintptr_t**>(DEFINE_RVA(0x21894F8))
+		*reinterpret_cast<uintptr_t**>(DEFINE_RVA(0x21A99D0))
 	};
 
 	return campManagerInstance;

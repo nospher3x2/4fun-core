@@ -9,7 +9,7 @@ public:
 	CLASS_GETTER(std::string, GetName, 0x28)
 	CLASS_GETTER(SpellDataResource*, GetSpellDataResource, 0x60)
 
-	void* GetTextureByIndex(uint8_t index)
+	[[nodiscard]] void* GetTextureByIndex(uint8_t index) const
 	{
 		return nullptr;
 	}

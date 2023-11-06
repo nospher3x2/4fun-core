@@ -24,6 +24,7 @@
     <ProjectGuid>{c39680c0-e038-4a94-80dc-11888a803d61}</ProjectGuid>
     <RootNamespace>KNCarry</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Core</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -54,6 +55,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -130,7 +132,9 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,9 +148,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game\Object\AvatarClient\Perk\Perk.cpp" />
+    <ClCompile Include="src\Game\Object\AvatarClient\AvatarClient.cpp" />
+    <ClCompile Include="src\Menu\Fonts\DroidSans.cpp" />
+    <ClCompile Include="src\Menu\Fonts\Roboto.cpp" />
+    <ClCompile Include="src\Menu\Component\Checkbox\MenuCheckbox.cpp" />
+    <ClCompile Include="src\Menu\Component\MenuComponent.cpp" />
+    <ClCompile Include="src\Menu\Menu.cpp" />
+    <ClCompile Include="src\Menu\Manager\MenuManager.cpp" />
+    <ClCompile Include="src\Plugins\Champions\Ashe\Ashe.cpp" />
+    <ClCompile Include="src\Plugins\PluginManager.cpp" />
+    <ClCompile Include="src\Hook\HookManager.cpp" />
+    <ClCompile Include="src\Game\Object\HeroInventoryCommon\HeroInventoryCommon.cpp" />
+    <ClCompile Include="src\Game\Object\PathControllerCommon\NavigationPath\NavigationPath.cpp" />
+    <ClCompile Include="src\Game\Object\PathControllerCommon\PathControllerCommon.cpp" />
+    <ClCompile Include="src\Game\Object\BuffManager\BuffInstance\BuffInstance.cpp" />
+    <ClCompile Include="src\Game\Object\BuffManager\BuffManager.cpp" />
     <ClCompile Include="src\Game\NeutralCampManager\NeutralCampManager.cpp" />
     <ClCompile Include="src\Game\ObjectManager\ObjectManager.cpp" />
     <ClCompile Include="src\Game\Object\Spellbook\SpellbookClient.cpp" />
+    <ClCompile Include="src\Math\Vector.cpp" />
     <ClCompile Include="src\Utils\Memory\MemoyScanner.cpp" />
     <ClCompile Include="src\Game\SpellDatabaseClient\SpellDatabaseClient.cpp" />
     <ClCompile Include="src\Game\HudManager\HudManager.cpp" />
@@ -154,7 +175,6 @@
     <ClCompile Include="src\Plugins\Core\Orbwalker\Orbwalker.cpp" />
     <ClCompile Include="src\EventHandler\EventHandler.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
-    <ClCompile Include="src\Hook\HookManager.cpp" />
     <ClCompile Include="src\Game\ManagerTemplate\ManagerTemplate.cpp" />
     <ClCompile Include="src\Game\R3DRenderer\R3DRenderer.cpp" />
     <ClCompile Include="src\Game\Object\GameObject.cpp" />
@@ -176,13 +196,34 @@
     <ClCompile Include="src\Drawing\Kiero\minhook\src\hook.c" />
     <ClCompile Include="src\Drawing\Kiero\minhook\src\trampoline.c" />
     <ClCompile Include="src\Drawing\DrawManager.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Drawing\Texture\TextureManager.cpp" />
+    <ClCompile Include="src\Plugins\Core\TargetSelector\TargetSelector.cpp" />
+    <ClCompile Include="src\Game\Object\UnitInfoComponent\UnitInfoComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game\Object\AvatarClient\Perk\Perk.hpp" />
+    <ClInclude Include="src\Game\Object\AvatarClient\AvatarClient.hpp" />
+    <ClInclude Include="src\Menu\Fonts\Fonts.hpp" />
+    <ClInclude Include="src\Menu\Component\Checkbox\MenuCheckbox.hpp" />
+    <ClInclude Include="src\Menu\Component\MenuComponent.hpp" />
+    <ClInclude Include="src\Menu\Menu.hpp" />
+    <ClInclude Include="src\Menu\Manager\MenuManager.hpp" />
+    <ClInclude Include="src\Plugins\Champions\Ashe\Ashe.hpp" />
+    <ClInclude Include="src\Plugins\PluginManager.hpp" />
+    <ClInclude Include="src\Hook\HookManager.hpp" />
+    <ClInclude Include="src\Game\Object\HeroInventoryCommon\HeroInventoryCommon.hpp" />
+    <ClInclude Include="src\Game\Object\HeroInventoryCommon\InventorySlot\InventorySlot.hpp" />
+    <ClInclude Include="src\Game\Object\HeroInventoryCommon\ItemData\ItemData.hpp" />
+    <ClInclude Include="src\Game\Object\HeroInventoryCommon\ScriptBaseItem\ScriptBaseItem.hpp" />
+    <ClInclude Include="src\Game\Object\PathControllerCommon\NavigationPath\NavigationPath.hpp" />
+    <ClInclude Include="src\Game\Object\PathControllerCommon\PathControllerCommon.hpp" />
+    <ClInclude Include="src\Game\Object\BuffManager\BuffInstance\BuffInstance.hpp" />
+    <ClInclude Include="src\Game\Object\BuffManager\BuffManager.hpp" />
     <ClInclude Include="src\Game\NeutralCampManager\NeutralCampManager.hpp" />
     <ClInclude Include="src\Game\ObjectManager\ObjectManager.hpp" />
     <ClInclude Include="src\Game\Object\CharacterIntermediate\CharacterIntermediate.hpp" />
     <ClInclude Include="src\Game\Object\Experience\Experience.hpp" />
+    <ClInclude Include="src\Riot\RiotEncryption.hpp" />
     <ClInclude Include="src\Utils\Memory\MemoyScanner.hpp" />
     <ClInclude Include="src\Game\SpellDatabaseClient\SpellDatabaseClient.hpp" />
     <ClInclude Include="src\Game\HudManager\HudManager.hpp" />
@@ -198,19 +239,15 @@
     <ClInclude Include="src\Logger\Logger.hpp" />
     <ClInclude Include="src\Game\Object\CharacterData\CharacterData.hpp" />
     <ClInclude Include="src\Game\Object\Spellbook\SpellbookClient.hpp" />
-    <ClInclude Include="src\Hook\HookManager.hpp" />
     <ClInclude Include="src\Game\ManagerTemplate\ManagerTemplate.hpp" />
     <ClInclude Include="src\Game\R3DRenderer\R3DRenderer.hpp" />
     <ClInclude Include="src\Game\Object\GameObject.hpp" />
-    <ClInclude Include="src\Hook\Syscall\Syscall.hpp" />
-    <ClInclude Include="src\Hook\Syscall\undocumented.h" />
     <ClInclude Include="src\Riot\RiotArray.hpp" />
     <ClInclude Include="src\Game\Game.hpp" />
     <ClInclude Include="src\Drawing\Console\Console.hpp" />
     <ClInclude Include="src\Packman\Packman.hpp" />
     <ClInclude Include="src\Patchables\Offsets.hpp" />
-    <ClInclude Include="src\main.hpp" />
-    <ClInclude Include="src\Math\Vector.h" />
+    <ClInclude Include="src\Math\Vector.hpp" />
     <ClInclude Include="src\Drawing\ImGui\Extensions\imgui_extensions.h" />
     <ClInclude Include="src\Drawing\ImGui\imconfig.h" />
     <ClInclude Include="src\Drawing\ImGui\imgui.h" />
@@ -234,14 +271,20 @@
     <ClInclude Include="src\Riot\RiotHash.hpp" />
     <ClInclude Include="src\Riot\RiotString.hpp" />
     <ClInclude Include="src\Utils\DllHide.h" />
+    <ClInclude Include="src\Utils\SpoofCall\spoof_call.h" />
+    <ClInclude Include="src\Drawing\Texture\TextureManager.hpp" />
+    <ClInclude Include="src\Plugins\Core\TargetSelector\TargetSelector.hpp" />
+    <ClInclude Include="src\Game\Object\UnitInfoComponent\UnitInfoComponent.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Drawing\Kiero\minhook\dll_resources\MinHook.def" />
+    <None Include="src\Utils\SpoofCall\spoofer.asm" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\Drawing\Kiero\minhook\dll_resources\MinHook.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

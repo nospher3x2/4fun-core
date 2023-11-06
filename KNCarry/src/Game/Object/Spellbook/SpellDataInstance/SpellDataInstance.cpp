@@ -20,7 +20,7 @@ bool SpellDataInstance::Cast()
 	targetClient->CursorPosition = player->GetPosition();
 	targetClient->UnknownPosition = player->GetPosition();
 
-	fnHudCastSpell(this->GetHudSpellLogic(), this->GetSpellData());
+	fnHudCastSpell(this->GetHudSpellLogic(), this->GetSpellData());	
 	return true;
 }
 
@@ -64,7 +64,7 @@ bool SpellDataInstance::Cast(const Vector3& position)
 	targetClient->CursorPosition = position;
 	targetClient->UnknownPosition = position;
 
-	fnHudCastSpell(nullptr, this->GetSpellData());
+	fnHudCastSpell(this->GetHudSpellLogic(), this->GetSpellData());
 	return true;
 
 }
@@ -87,6 +87,7 @@ bool SpellDataInstance::Cast(const Vector3& startPosition, const Vector3& endPos
 	targetClient->CursorPosition = endPosition;
 	targetClient->UnknownPosition = endPosition;
 
+
 	fnHudCastSpell(this->GetHudSpellLogic(), this->GetSpellData());
 	return true;
 }
@@ -98,7 +99,7 @@ void SpellDataInstance::ShowDebugMessage() const
 	Logger::Warn("Name: %s", this->GetSpellData()->GetName().c_str());
 	Logger::Warn("Hash: %lu", this->GetSpellData()->GetHash());
 	Logger::Warn("Level: %i", this->GetLevel());
-	Logger::Warn("Expire Time: %.2f", this->GetExpireTime());
+	Logger::Warn("Ready At: %.2f", this->GetReadyAt());
 	Logger::Warn("Ammo: %i", this->GetAmmo());
 	Logger::Warn("-----------------");
 }

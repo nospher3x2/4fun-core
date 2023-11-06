@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../../Patchables/Offsets.hpp"
-#include "../../../../Math/Vector.h"
+#include "../../../../Math/Vector.hpp"
 
 #include "../SpellData/SpellData.hpp"
 
@@ -8,6 +8,7 @@ class SpellCastInfo
 {
 public:
 	CLASS_GETTER(SpellData*, GetSpellData, 0x8)
+	CLASS_GETTER(const char*, GetSpellName, 0x18)
 	CLASS_GETTER(bool, IsAutoAttack, 0x1) // Unknown
 	CLASS_GETTER(uint16_t, GetCasterHandle, 0x2) // Unknown
 	CLASS_GETTER(uint16_t, GetTargetHandle, 0x3) // Unknown

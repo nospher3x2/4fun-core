@@ -16,6 +16,11 @@ RiotArray<GameObject*>& ManagerTemplate::GetTurrets()
 	return ManagerTemplate::GetRiotArray(Offsets::ManagerTemplate::TURRET_MANAGER);
 }
 
+RiotArray<GameObject*>& ManagerTemplate::GetInhibitors()
+{
+	return ManagerTemplate::GetRiotArray(Offsets::ManagerTemplate::INHIBITOR_MANAGER);
+}
+
 std::map<uint32_t, GameObject*> ManagerTemplate::GetMissiles() {
 	uintptr_t* missileManager = *reinterpret_cast<uintptr_t**>(DEFINE_RVA(Offsets::ManagerTemplate::MISSILE_MANAGER));
 	return *reinterpret_cast<std::map<uint32_t, GameObject*>*>(missileManager + 0x8);

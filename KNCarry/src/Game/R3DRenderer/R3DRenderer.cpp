@@ -8,8 +8,8 @@ void R3DRenderer::Initialize()
 	R3DRenderer::RendererInstance = *reinterpret_cast<uintptr_t*>(DEFINE_RVA(Offsets::R3DRenderer::INSTANCE));
 	//R3DRenderer::ViewProjectionMatrix = *reinterpret_cast<uintptr_t*>(DEFINE_RVA(Offsets::R3DRenderer::VIEW_PROJECTION_MATRIX));
 
-	R3DRenderer::ScreenWidth = reinterpret_cast<int*>(R3DRenderer::RendererInstance + 0x10);
-	R3DRenderer::ScreenHeight = reinterpret_cast<int*>(R3DRenderer::RendererInstance + 0xC);
+	R3DRenderer::ScreenWidth = reinterpret_cast<int*>(R3DRenderer::RendererInstance + 0xC);
+	R3DRenderer::ScreenHeight = reinterpret_cast<int*>(R3DRenderer::RendererInstance + 0x10);
 }
 
 int R3DRenderer::GetScreenWidth()
@@ -42,6 +42,23 @@ bool R3DRenderer::WorldToScreen(const Vector3& position, Vector2* out)
 	);
 }
 
+uintptr_t R3DRenderer::GetTexture(const char* name)
+{
+	static const uintptr_t textureManagerInstance{
+		*reinterpret_cast<uintptr_t*>(DEFINE_RVA(0x21AC728))
+	};
+
+	static const auto fnGetTexture{
+		reinterpret_cast<uintptr_t*(__fastcall*)(uintptr_t, uintptr_t*, RiotStringTexture*)>
+		(DEFINE_RVA(0xE08130))
+	};
+
+	RiotStringTexture* stringTextureName = new RiotStringTexture{name};
+	uintptr_t texture = 0;
+	fnGetTexture(textureManagerInstance, &texture, stringTextureName);
+	return texture;
+}
+
 void R3DRenderer::DrawTextX(const char* text, float size, const Vector3& position, uint32_t color, std::string fontName, bool outline, bool shadow)
 {
 	if ((color & IM_COL32_A_MASK) == 0)
@@ -64,11 +81,19 @@ void R3DRenderer::DrawCircle(const Vector3& position, const float radius, const 
 	if ((color & IM_COL32_A_MASK) == 0)
 		return;
 
+	//static const auto fnQueryHeightForPosition{
+	//reinterpret_cast<float(__fastcall*)(float x, float z, float* y)>
+	//	(DEFINE_RVA(0xd82400))
+	//};
+
 	Vector3 worldPosition = position;
+	//fnQueryHeightForPosition(worldPosition.x, worldPosition.z, &worldPosition.y);
+
 	for (auto i = 0; i <= 99; i++) {
 		const auto angle = static_cast<float>(i) * M_PI * 1.98f / 98.0f;
 		worldPosition.x = position.x + cos(angle) * radius;
 		worldPosition.z = position.z + sin(angle) * radius;
+		//fnQueryHeightForPosition(worldPosition.x, worldPosition.z, &worldPosition.y);
 
 		Vector2 screenPosition{};
 		R3DRenderer::WorldToScreen(worldPosition, &screenPosition);

@@ -1,54 +1,55 @@
 #include "MemoyScanner.hpp"
-#include "../../Patchables/Offsets.hpp"
+#include <Psapi.h>
 
-namespace mem
+void* MemoryScanner::ScanModInternal(const char* pattern, const char* mask, char* baseAddress)
 {
-	char* ScanBasic(char* pattern, char* mask, char* begin, intptr_t size)
-	{
-		intptr_t patternLen = strlen(mask);
-
-		for (int i = 0; i < size; i++)
-		{
-			bool found = true;
-			for (int j = 0; j < patternLen; j++)
-			{
-				if (mask[j] != '?' && pattern[j] != *(char*)((intptr_t)begin + i + j))
-				{
-					found = false;
-					break;
-				}
-			}
-			if (found)
-			{
-				return (begin + i);
-			}
-		}
+	MODULEINFO module{};
+	if (!GetModuleInformation(GetCurrentProcess(), reinterpret_cast<HMODULE>(baseAddress), &module, sizeof(MODULEINFO)))
 		return nullptr;
+
+	char* match = MemoryScanner::ScanInternal(pattern, mask, baseAddress, module.SizeOfImage);
+	return match;
+}
+
+char* MemoryScanner::ScanInternal(const char* pattern, const char* mask, char* begin, const size_t size)
+{
+	MEMORY_BASIC_INFORMATION mbi{};
+
+	for (char* curr = begin; curr < begin + size; curr += mbi.RegionSize)
+	{
+		if (!VirtualQuery(curr, &mbi, sizeof mbi))
+			continue;
+
+		if (mbi.State != MEM_COMMIT || mbi.Protect == PAGE_NOACCESS)
+			continue;
+
+		char* match = MemoryScanner::ScanBasic(pattern, mask, curr, mbi.RegionSize);
+		if (match)
+			return match;
 	}
 
-	char* ScanInternal(char* pattern, char* mask, char* begin, intptr_t size)
+	return nullptr;
+}
+
+char* MemoryScanner::ScanBasic(const char* pattern, const char* mask, char* begin, const size_t size)
+{
+	const size_t patternLen = strlen(mask);
+	for (size_t i = 0; i < size; i++)
 	{
-		char* match{ nullptr };
-		MEMORY_BASIC_INFORMATION mbi{};
-
-		for (char* curr = begin; curr < begin + size; curr += mbi.RegionSize)
+		bool found = true;
+		for (size_t j = 0; j < patternLen; j++)
 		{
-			if (!VirtualQuery(curr, &mbi, sizeof(mbi)) || mbi.State != MEM_COMMIT || mbi.Protect == PAGE_NOACCESS) continue;
-
-			match = ScanBasic(pattern, mask, curr, mbi.RegionSize);
-
-			if (match != nullptr)
+			if (mask[j] != '?' && pattern[j] != *(begin + i + j))
 			{
+				found = false;
 				break;
 			}
 		}
-		return match;
+
+		if (found)
+			return begin + i;
 	}
 
-	char* ScanModInternal(char* pattern, char* mask, char* moduleBase)
-	{
-		char* match = ScanInternal(pattern, mask, moduleBase, Offsets::MODULE_INFO.SizeOfImage);
-
-		return match;
-	}
+	return nullptr;
 }
+

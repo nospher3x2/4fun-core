@@ -1,16 +1,17 @@
 #include "SpellbookClient.hpp"
 
-SpellDataInstance* SpellbookClient::GetSpell(SpellSlot slot)
+SpellDataInstance* SpellbookClient::GetSpell(const uint8_t slot)
 {
-	return *reinterpret_cast<SpellDataInstance**>(reinterpret_cast<uintptr_t>(this) + 0x6D0 + 0x8 * uint8_t(slot));
+	return *reinterpret_cast<SpellDataInstance**>(this + Offsets::Spellbook::SPELLS + 0x8 * slot);
 }
 
-SpellState SpellbookClient::GetSpellState(SpellSlot slot)
+SpellState SpellbookClient::CanUseSpell(const uint8_t slot)
 {
-	return SpellState::Ready;
+	bool junk{};
+	return CallVFunc<SpellState>(this, 2, slot, &junk);
 }
 
-float SpellbookClient::GetManaCost(SpellSlot slot)
+float SpellbookClient::GetManaCost(const uint8_t slot)
 {
-	return *reinterpret_cast<float*>(reinterpret_cast<uintptr_t>(this) + 0x90 + 0x18 * uint8_t(slot));
+	return *reinterpret_cast<float*>(this + Offsets::Spellbook::GET_MANA + 0x18 * slot);
 }

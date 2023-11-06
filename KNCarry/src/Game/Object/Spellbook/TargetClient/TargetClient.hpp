@@ -1,7 +1,6 @@
 #pragma once
-#include "../../../../Riot/RiotString.hpp"
 #include "../../../../Patchables/Offsets.hpp"
-#include "../../../../Math/Vector.h"
+#include "../../../../Math/Vector.hpp"
 #include "../../../../Logger/Logger.hpp"
 
 class TargetClient

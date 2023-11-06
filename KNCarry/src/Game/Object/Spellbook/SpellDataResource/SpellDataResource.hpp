@@ -5,8 +5,6 @@
 class SpellDataResource
 {
 public:
-	union
-	{
-
-	};
+	CLASS_GETTER(float, GetMissileSpeed, 0x460)
+	CLASS_GETTER(float, GetSpellWidth, 0x540)
 };

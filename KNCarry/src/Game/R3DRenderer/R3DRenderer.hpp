@@ -1,11 +1,26 @@
 #pragma once
 #include <cstdint>
 #include <string>
-
-#include "../../Math/Vector.h"
-
+#include "../../Logger/Logger.hpp"
+#include "../../Math/Vector.hpp"
 #define RGBA(iRed, iGreen, iBlue, iAlpha)    (((std::uint32_t)(iAlpha)<<24) | ((std::uint32_t)(iBlue)<<16) | ((std::uint32_t)(iGreen)<<8) | ((std::uint32_t)(iRed)<<0))
 #define ARGB(iAlpha, iRed, iGreen, iBlue)    RGBA(iRed, iGreen, iBlue, iAlpha)
+
+class RiotStringTexture
+{
+public:
+	char* StringName;
+	size_t Size;
+	size_t MaxSize;
+	const char* Content;
+	explicit RiotStringTexture(std::string text)
+	{
+		this->StringName = text.data();
+		this->Size = text.size();
+		this->MaxSize = text.max_size();
+		this->Content = text.c_str();
+	}
+};
 
 class R3DRenderer
 {
@@ -16,6 +31,7 @@ public:
 	static int GetScreenWidth();
 	static int GetScreenHeight();
 	static bool WorldToScreen(const Vector3& position, Vector2* out);
+	static uintptr_t GetTexture(const char* name);
 
 	static void	 DrawTextCentered(const char* text, const Vector2& position, float size, uint32_t color, std::string fontName, bool outline = false, bool shadow = false);
 	static void	 DrawTextX(const char* text, float size, const Vector3& position, uint32_t color, std::string fontName, bool outline = false, bool shadow = false);
@@ -23,7 +39,7 @@ public:
 	
 	// 3D Drawing (World)
 	static void	DrawLine(const Vector3& start, const Vector3& end, uint32_t color, float thickness);
-	static void	DrawRect(const Vector4& rect, uint32_t color, float thickness, bool filled = false);
+	//static void	DrawRect(const Vector4& rect, uint32_t color, float thickness, bool filled = false);
 	static void DrawCircle(const Vector3& position, float radius, uint32_t color, float thickness, bool filled = false);
 	static void DrawBox(const Vector3& position, Vector2 size, uint32_t color, float thickness, bool filled = false);
 	static void DrawTriangle(const Vector3& position, Vector2 size, uint32_t color, float thickness, bool filled = false);
